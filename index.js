@@ -1,112 +1,99 @@
 var express = require('express');
 var five = require("johnny-five");
-var exphbs  = require('express-handlebars');
+var exphbs = require('express-handlebars');
 var bodyParser = require('body-parser');
 var github = require('octonode');
-var client = github.client({
-  username: 'ntombi20',
-  password: process.env.PASS
-});
 var app = express();
 var board = new five.Board();
-var ghrepo = client.repo('radlee/hub');
-var ghpr = client.pr('radlee/hub', 37);
 
 //setup template handlebars as the template engine
-app.engine('handlebars', exphbs({defaultLayout: 'main'}));
+app.engine('handlebars', exphbs({
+    defaultLayout: 'main'
+}));
 app.set('view engine', 'handlebars');
 app.use(express.static(__dirname + '/public'));
 
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({
+    extended: false
+}))
 app.use(bodyParser.json())
 
+var client = github.client();
 
-client.get('/user', {}, function (err, status, body, headers) {
-  console.log(body); //json object
-});
+var specificUserFilePool = function(ghUserId, repository_name, cb){
 
-// var client = github.client({
-//   username: 'radlee',
-//   password: process.env.PASS
-// },{
-//   hostname: 'mydomain.com/api/v3'
-// });
+    client
+        .get('/repos/' + ghUserId + '/' + repository_name + '/pulls' , function(err, results, data){
+          var pullRequest = data.forEach(function(item){
+            var detailedUserContentObj ={
+              username: item.user,
+              comment: item.body,
+              close: item.closed_at,
+              state: item.state
+            }
+            console.log(detailedUserContentObj);
+            process.nextTick(function(){
+                cb(err, detailedUserContentObj);
+            })
+          })
+
+          board.on("ready", function() {
+              console.log(detailedUserContentObj.state);
+              var pullRequestLED = new five.Led(13);
+
+              pullRequestLED.off();
+
+              app.get("/pullRequestOn", function(req, res) {
+                  pullRequestLED.on();
+                  res.render("home");
+              });
+
+              app.get("/pullRequestOff", function(req, res) {
+                  pullRequestLED.off();
+                  res.render("home");
+              });
+
+          });
+
+        // var holdFileNames = data.map(function(entry){
+        //     var holdAllFiles = entry.name;
+        //       return holdAllFiles;
+        // })
+        // // console.log(holdFileNames.length);
+        // var file_No = holdFileNames.length
+        // // gather user specifics but without the get user module(Plugin)
+        // var detailedUserContentObj = {
+        //      ghUserId :  ghUserId,
+        //      repository_name : repository_name,
+        //      holdFileNames : file_No
+        // };
+            //make sure it's a true async call
 
 
-client.get('/users/pksunkara', {}, function (err, status, body, headers) {
-  console.log(body); //json object
-});
-
-app.get("/",function(req, res) {
-  res.render("home");
-});
-
-app.get("/",function(req, res) {
-  res.render("home");
-});
+        // console.log(username + " ," + pul);
+        // console.log(data);
+        // return data?;
+          });
 
 
-<<<<<<< HEAD
-board.on("ready", function() {
+};
 
-  var pullRequestLED = new five.Led(13);
-  var mergeLED = new five.Led(12);
-  pullRequestLED.off();
+var trackedUser = 'Ntombi20';
+app.get('/', function(req, res){
 
-  app.get("/pullRequestOn", function(req, res){
-    pullRequestLED.on();
-    res.render("home");
+  specificUserFilePool('Ntombi20', 'ledNodebot', function(err, detailedUserContent){
+    // res.send(data)
+      res.render('home',{
+        filesNameResult : detailedUserContent
+    })
   });
-
-  app.get("/mergeOn", function(req, res){
-    mergeLED.on();
-    res.render("home");
-  });
-
-  app.get("/pullRequestOff", function(req, res){
-    pullRequestLED.off();
-    res.render("home");
-  });
-
-  app.get("/mergeOff", function(req, res){
-    mergeLED.off();
-    res.render("home");
-  });
-
-
 });
-=======
-// board.on("ready", function() {
-//
-//   var pullRequestLED = new five.Led(13);
-//   var mergeLED = new five.Led(12);
-//   pullRequestLED.off();
-//
-//   app.get("/pullRequestOn", function(req, res){
-//     pullRequestLED.on();
-//     res.render("home");
-//   });
-//
-//   app.get("/mergeOn", function(req, res){
-//     mergeLED.on();
-//     res.render("home");
-//   });
-//
-//   app.get("/pullRequestOff", function(req, res){
-//     pullRequestLED.off();
-//     res.render("home");
-//   });
-//
-//   app.get("/mergeOff", function(req, res){
-//     mergeLED.off();
-//     res.render("home");
-//   });
-//
-//
-// });
->>>>>>> 4829a7a26f4f17040b9a18e8118abb023684b65d
+
+app.get('/', function(req, res){
+	res.render('home');
+})
 
 var port = process.env.port || 3000;
-app.listen(port, function(){
-    console.log('App running at port :' , port)
+app.listen(port, function() {
+    console.log('App running at port :', port)
 });
