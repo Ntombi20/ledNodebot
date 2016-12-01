@@ -12,8 +12,6 @@ var board = new five.Board();
 var ghrepo = client.repo('radlee/hub');
 var ghpr = client.pr('radlee/hub', 37);
 
-
-
 //setup template handlebars as the template engine
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
@@ -48,6 +46,7 @@ app.get("/",function(req, res) {
 });
 
 
+<<<<<<< HEAD
 board.on("ready", function() {
 
   var pullRequestLED = new five.Led(13);
@@ -76,6 +75,36 @@ board.on("ready", function() {
 
 
 });
+=======
+// board.on("ready", function() {
+//
+//   var pullRequestLED = new five.Led(13);
+//   var mergeLED = new five.Led(12);
+//   pullRequestLED.off();
+//
+//   app.get("/pullRequestOn", function(req, res){
+//     pullRequestLED.on();
+//     res.render("home");
+//   });
+//
+//   app.get("/mergeOn", function(req, res){
+//     mergeLED.on();
+//     res.render("home");
+//   });
+//
+//   app.get("/pullRequestOff", function(req, res){
+//     pullRequestLED.off();
+//     res.render("home");
+//   });
+//
+//   app.get("/mergeOff", function(req, res){
+//     mergeLED.off();
+//     res.render("home");
+//   });
+//
+//
+// });
+>>>>>>> 4829a7a26f4f17040b9a18e8118abb023684b65d
 
 var port = process.env.port || 3000;
 app.listen(port, function(){
