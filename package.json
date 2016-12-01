@@ -7,7 +7,8 @@
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "express-handlebars": "^3.0.0",
-    "johnny-five": "^0.10.6"
+    "johnny-five": "^0.10.6",
+    "serialport": "^4.0.6"
   },
   "devDependencies": {},
   "scripts": {
