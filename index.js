@@ -2,8 +2,17 @@ var express = require('express');
 var five = require("johnny-five");
 var exphbs  = require('express-handlebars');
 var bodyParser = require('body-parser');
+var github = require('octonode');
+var client = github.client({
+  username: 'ntombi20',
+  password: process.env.PASS
+});
 var app = express();
 var board = new five.Board();
+var ghrepo = client.repo('radlee/hub');
+var ghpr = client.pr('radlee/hub', 37);
+
+
 
 //setup template handlebars as the template engine
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
@@ -14,6 +23,26 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 
+client.get('/user', {}, function (err, status, body, headers) {
+  console.log(body); //json object
+});
+
+// var client = github.client({
+//   username: 'radlee',
+//   password: process.env.PASS
+// },{
+//   hostname: 'mydomain.com/api/v3'
+// });
+
+
+client.get('/users/pksunkara', {}, function (err, status, body, headers) {
+  console.log(body); //json object
+});
+
+app.get("/",function(req, res) {
+  res.render("home");
+});
+
 app.get("/",function(req, res) {
   res.render("home");
 });
@@ -23,7 +52,7 @@ board.on("ready", function() {
 
   var pullRequestLED = new five.Led(13);
   var mergeLED = new five.Led(12);
-  pullRequestLED.on();
+  pullRequestLED.off();
 
   app.get("/pullRequestOn", function(req, res){
     pullRequestLED.on();
