@@ -9,14 +9,12 @@
 
 {{#filesNameResult}}
     <br>
-    <h3>Name : {{ghUserId}} </h3>
+    <h3>Username : {{item.user}} </h3>
+    <h4>Comment : {{item.body}}</h4>
+    <h4>Close : {{item.closed_at}}</h4>
+    <h4>State : {{item.state}}</h4>
     <br>
-    <h4>Repository : {{repository_name}}</h4>
-    <br>
-    <br>
-    <h4>Existing Files : {{holdFileNames}}</h4>
-    <br>
-    <br>
+
     <!-- username: item.user,
     comment: item.body,
     close: item.closed_at,

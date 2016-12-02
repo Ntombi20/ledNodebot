@@ -1,5 +1,6 @@
 var express = require('express');
 var five = require("johnny-five");
+  button, led;
 var exphbs = require('express-handlebars');
 var bodyParser = require('body-parser');
 var github = require('octonode');
@@ -18,79 +19,81 @@ app.use(bodyParser.urlencoded({
 }))
 app.use(bodyParser.json())
 
-var client = github.client();
+var client = github.client('de64335ac833748acba2ad3ad7cdd3baa5f724b3');
 
-var specificUserFilePool = function(ghUserId, repository_name, cb){
+var specificUserFilePool = function(ghUserId, repository_name, cb) {
 
     client
-        .get('/repos/' + ghUserId + '/' + repository_name + '/pulls' , function(err, results, data){
-          var pullRequest = data.forEach(function(item){
-            var detailedUserContentObj ={
-              username: item.user,
-              comment: item.body,
-              close: item.closed_at,
-              state: item.state
+        .get('/repos/' + ghUserId + '/' + repository_name + '/pulls', function(err, results, data) {
+            if (err) return cb(err);
+
+            if (!data) {
+                return cb(null, {})
             }
-            console.log(detailedUserContentObj);
-            process.nextTick(function(){
-                cb(err, detailedUserContentObj);
-            })
-          })
 
-          board.on("ready", function() {
-              console.log(detailedUserContentObj.state);
-              var pullRequestLED = new five.Led(13);
-
-              pullRequestLED.off();
-
-              app.get("/pullRequestOn", function(req, res) {
-                  pullRequestLED.on();
-                  res.render("home");
-              });
-
-              app.get("/pullRequestOff", function(req, res) {
-                  pullRequestLED.off();
-                  res.render("home");
-              });
-
-          });
-
-        // var holdFileNames = data.map(function(entry){
-        //     var holdAllFiles = entry.name;
-        //       return holdAllFiles;
-        // })
-        // // console.log(holdFileNames.length);
-        // var file_No = holdFileNames.length
-        // // gather user specifics but without the get user module(Plugin)
-        // var detailedUserContentObj = {
-        //      ghUserId :  ghUserId,
-        //      repository_name : repository_name,
-        //      holdFileNames : file_No
-        // };
-            //make sure it's a true async call
-
-
-        // console.log(username + " ," + pul);
-        // console.log(data);
-        // return data?;
-          });
-
-
+            var pullRequests = data.map(function(item) {
+                return {
+                    username: item.user,
+                    comment: item.body,
+                    close: item.closed_at,
+                    state: item.state
+                }
+            });
+            cb(null, pullRequests)
+        });
 };
 
-var trackedUser = 'Ntombi20';
-app.get('/', function(req, res){
+five.board().on("ready", function() {
 
-  specificUserFilePool('Ntombi20', 'ledNodebot', function(err, detailedUserContent){
-    // res.send(data)
-      res.render('home',{
-        filesNameResult : detailedUserContent
-    })
-  });
+    var pullRequestLED = new five.Led(13);
+    var pullLocal = new five.Led(12);
+
+    var button = new five.Button({
+      pin: 2,
+      isPullup: true
+    });
+    pullRequestLED.off();
+
+    button.on("down", function(value) {
+      led.on();
+    });
+
+    button.on("up", function() {
+      led.off();
+    });
+    setInterval(function() {
+        specificUserFilePool('Ntombi20', 'ledNodebot', function(err, pullRequests) {
+            if (err) {
+                console.log(err);
+            }
+
+            if (pullRequests.length === 0) {
+                pullRequestLED.off();
+                console.log("on");
+                pullLocal.on();
+            } else {
+                // console.log(pullRequests.state);
+                var pullRequest = pullRequests[0];
+                if (pullRequest.state) {
+
+                    if (pullRequest.state === "open") {
+                        pullRequestLED.on();
+                    }
+
+                } else {
+                    console.log('state not available');
+                }
+            }
+
+        });
+    }, 1000 * 3);
+
+
+
 });
 
-app.get('/', function(req, res){
-	res.render('home');
+app.get('/', function(req, res) {
+    res.render('home');
 })
 
 var port = process.env.port || 3000;
