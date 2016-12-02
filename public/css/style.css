@@ -1,0 +1,98 @@
+body {
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  color: #fff;
+  background-color: #151515 !important;
+  font-family: 'Open Sans',Arial,Helvetica,Sans-Serif;
+  /*Extra -----*/
+  /*background: #f8f8f8;*/
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  color: #888;
+  line-height: 30px;
+  text-align: center;
+}
+
+.navbar-toggle{
+  background: rgba(0, 0, 0, 0.5) !important;
+  color: blue !important;
+}
+
+ul.nav a:hover {
+  color: #cddede !important;
+  background-color: black !important;
+  border-top-right-radius: 20px !important;
+  border-bottom-right-radius: 20px !important;
+}
+
+.navbar-nav > li > .dropdown-menu {
+  background-color: #044052;
+}
+
+a {
+  color: white !important;
+}
+
+.navbar-inverse {
+  background: rgba(0, 0, 0, 0.5) !important;
+  color: white !important;
+  border: none !important;
+}
+
+.navbar-brand>img {
+  height: 100%;
+  /*padding: 15px;*/
+  width: auto;
+}
+
+@import url(http://fonts.googleapis.com/css?family=Doppio+One);
+
+.btn-danger {
+  background-color: rgba(136, 5, 5, 0.13) !important;
+  /*border-radius: 03px !important;*/
+  border: 1px solid white !important;
+}
+
+.btn-warning {
+  background-color: rgba(7, 128, 167, 0.13) !important;
+  border-radius: 0px !important;
+  border: 1px solid white !important;
+}
+
+.btn-success {
+  background-color: rgba(7, 179, 75, 0.13) !important;
+  border-radius: 0px !important;
+  /*border: 1px solid white !important;*/
+  float: right;
+}
+
+.btn-primary {
+  background-color: #044052 !important;
+  border-radius: 0px !important;
+  border: 1px solid white !important;
+}
+
+.btn-default {
+  background-color: #008080 !important;
+  border-radius: 0px !important;
+  border: 1px solid  #044052 !important;
+  color: white !important;
+}
+.dropdown-menu {
+  border-radius: 0px !important;
+  border: 1px solid  #044052 !important;
+}
+
+.navbar .brand {
+  max-height: 70px;
+  overflow: visible;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.navbar a.navbar-brand {
+  padding: 0px 15px 0px;
+}
